@@ -1,16 +1,17 @@
 <?php
-namespace app\index\controller;
-class Index
-{
-    public function index()
+    namespace app\index\controller;
+    class Index extends Base
     {
+        public function index()
+        {
 
-        dump(config());
+//            dump(config());
+            dump(test());
+            dump(test2());
+        }
 
+        public function hello($name = 'ThinkPHP5')
+        {
+            return 'hello,' . $name;
+        }
     }
-
-    public function hello($name = 'ThinkPHP5')
-    {
-        return 'hello,' . $name;
-    }
-}

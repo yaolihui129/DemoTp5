@@ -5,7 +5,7 @@
 
 return [
     // 应用名称
-    'app_name'               => '',
+    'app_name'               => 'xiuLi',
     // 应用地址
     'app_host'               => '',
     // 应用调试模式
