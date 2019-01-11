@@ -5,11 +5,13 @@
 
 return [
     // 应用名称
-    'app_name'               => 'Admin',
+    'app_name'               => 'admin',
     // 应用地址
     'app_host'               => '',
     // 应用调试模式
     'app_debug'              => true,
     // 应用Trace
     'app_trace'              => false,
+    //空控制器
+    'empty_controller'      => 'Error',
 ];

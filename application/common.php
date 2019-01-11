@@ -1,79 +1,17 @@
 <?php
-    use \think\Db;
-    use think\db\Where;
-    // 应用公共文件
+
+use think\facade\Cache;
+use think\facade\Cookie;
+use think\facade\Session;
+
+// 应用公共文件
     /**
      * 数据库操作
      * @param $table
-     * @param $data
-     * @return $res
-    */
-    function insert($table,$data){
-        $res =db($table,[],false)->strict(false)->insertGetId($data);
-        return $res;
-    }
-    function insertAll($table,$data,$limit=''){
-        if($limit){
-            $userId = db($table,[],false)->strict(false)->limit($limit)->insertAll($data);
-        }else{
-            $userId = db($table,[],false)->strict(false)->insertAll($data);
-        }
-        return $userId;
-    }
-    function update($table,$data){
-        $userId = db($table,[],false)->update($data);
-        return $userId;
-    }
-    function del($table,$id){
-        $res = db($table,[],false)->where('id', $id)
-                ->useSoftDelete('deleted',time())
-                ->delete();
-        return $res;
-    }
-    function realDel($table,$arrId){
-        $res = db($table,[],false)->delete($arrId);
-        return $res;
-    }
-
-/**
- * @param $table
- * @param $where
- * @param string $order
- * @param string $field
- * @param string $size
- * @return array|PDOStatement|string|\think\Collection
- * @throws \think\exception\DbException
- */
-function getList($table, $where, $order = 'id', $field = '*', $size=''){
-        $where['deleted'] = '0';
-        if($size){
-            /** @var TYPE_NAME $table */
-            try {
-                $data = Db::name($table)->where($where)->order($order)->field($field)->paginate($size);
-            } catch (\think\exception\DbException $e) {
-            }
-        }else{
-            try {
-                $data = db($table, [], false)
-                    ->where(new Where($where))
-                    //                ->where('deleted','0')
-                    ->order($order)->field($field)
-                    ->select();
-            } catch (\think\db\exception\DataNotFoundException $e) {
-            } catch (\think\db\exception\ModelNotFoundException $e) {
-            } catch (\think\exception\DbException $e) {
-            }
-        }
-        return $data;
-    }
-    function find($table,$id,$field = '*'){
-        $res=db($table,[],false)->field($field)->find($id);
-        return $res;
-    }
-    function findOne($table,$where,$field = ''){
-        $res=db($table,[],false)->where($where)->field($field)->find();
-        return $res;
-    }
+     * @param $where
+     * @param string $field
+     * @return float|string $res
+     */
     function countId($table,$where,$field = 'id'){
         $where['deleted'] = '0';
         $where['removed'] = '0';
@@ -89,14 +27,6 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
         $res = db($table,[],false)->where('id',$id)->value($field);
         return $res;
     }
-//    function max($table,$field,$where){
-//        $res=db($table,[],false)->where($where)->max($field,false);
-//        return $res;
-////    }
-//    function min($table,$field,$where){
-//        $res=db($table,[],false)->where($where)->min($field,false);
-//        return $res;
-//    }
     function sum($table,$field,$where){
         $res=db($table,[],false)->where($where)->sum($field,false);
         return $res;
@@ -139,6 +69,9 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
 
     /**
      ** 加解密操作
+     * @param $txt
+     * @param string $key
+     * @return string
      */
     function passport_encrypt($txt, $key = 'xiuliguanggao.com')
     {
@@ -321,7 +254,6 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
     {
         return isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off';
     }
-
     /**
      *数组相关操作
     /**
@@ -392,34 +324,15 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
         }
         return $result;
     }
-    /**
-     * 	array转xml
-     */
-    function arrayToXml($arr){
-        $xml = "";
-        foreach ($arr as $key=>$val)
-        {
-            if (is_numeric($val)){
-                $xml.="<".$key.">".$val."</".$key.">";
-            }else{
-                $xml.="<".$key."><![CDATA[".$val."]]></".$key.">";
-            }
-        }
-        return  "<xml>".$xml."</xml>";
-    }
-    //接收Json并转换为数组；
-    function getJsonToArray()
-    {
-        $json = file_get_contents('php://input');
-        $array = json_decode($json, true);
-        return $array;
-    }
-
 
     /**
      ** 字符串操作
      */
-    //获取随机码
+    /**
+     * 获取随机码
+     * @param $length
+     * @return string
+     */
     function getRandCode($length){
         $array = array(
             'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
@@ -434,24 +347,33 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
         }
         return $tmpstr;
     }
+
     /**
      *检查手机号码格式
+     * @param $mobile
+     * @return bool
      */
     function checkMobile($mobile){
         if(preg_match('/1[34578]\d{9}$/',$mobile))
             return true;
         return false;
     }
+
     /**
      *检查固定电话
+     * @param $mobile
+     * @return bool
      */
     function checkTelephone($mobile){
         if(preg_match('/^([0-9]{3,4}-)?[0-9]{7,8}$/',$mobile))
             return true;
         return false;
     }
+
     /**
      * 检查邮箱地址格式
+     * @param $email
+     * @return bool
      */
     function checkEmail($email){
         if(filter_var($email,FILTER_VALIDATE_EMAIL))
@@ -463,8 +385,13 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
         $arr=rtrim($arr, $a);
         return $arr;
     }
+
     /**
      *   实现中文字串截取无乱码的方法
+     * @param $string
+     * @param $start
+     * @param $length
+     * @return string
      */
     function getSubStr($string, $start, $length) {
         if(mb_strlen($string,'utf-8')>$length){
@@ -474,20 +401,30 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
             return $string;
         }
     }
+
     /**
      * 替换特殊字符
+     * @param $orignalStr
+     * @param string $replace
+     * @return null|string|string[]
      */
     function replaceSpecialStr($orignalStr , $replace=''){
         return preg_replace("/[^\x{4e00}-\x{9fa5}]/iu", $replace ,$orignalStr);
     }
+
     /**
      **手机号码脱敏
-     **/
+     * @param $mobile
+     * @return mixed
+     */
     function mobileHide($mobile){
         return substr_replace($mobile,'****',3,4);
     }
+
     /**
      *URL安全转化
+     * @param $uri
+     * @return mixed|string
      */
     function urlSafeB4encode($uri)
     {
@@ -495,8 +432,11 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
         $data = str_replace(array('+','/','='),array('-','_',''),$data);
         return $data;
     }
+
     /**
      * 获取整条字符串汉字拼音首字母
+     * @param $zh
+     * @return string
      */
     function pinYinLong($zh){
         $ret = "";
@@ -693,6 +633,8 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
     }
     /**
      * 友好时间显示
+     * @param $time
+     * @return bool|false|string
      */
     function friendDate($time)
     {
@@ -748,6 +690,31 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
         return $fdate;
     }
 
+    function getCacheKey($key){
+        $res=Cache::get($key);
+        return $res;
+    }
+    function delCacheKey($key){
+        $res = Cache::rm($key);
+        return $res;
+    }
+    function clearCacheKey(){
+        $res = Cache::clear();
+        return $res;
+    }
+    function setCacheKey($key,$value,$expire=3600){
+        $res = Cache::set($key,$value,$expire);
+        return $res;
+    }
+    function incCacheValue($key,$step=1){
+        $res =  Cache::inc($key,$step);
+        return $res;
+    }
+    function decCacheValue($key,$step=1){
+        $res = Cache::dec($key,$step);
+        return $res;
+    }
+
     /**
      * Cookie相关的操作
      * @param $key
@@ -755,22 +722,36 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
      * @return $res
      */
     function getCookieKey($key,$prefix=''){
-//        cookie(['prefix' => config('app_name'), 'expire' => $expire]);
-        $res=cookie($key);
+        if($prefix){
+            $res= Cookie::get($key,$prefix);
+        }else{
+            $res= Cookie::get($key,config('app_name').'_');
+        }
         return $res;
     }
     function setCookieKey($key,$value,$expire=3600){
-        cookie(['prefix' => config('app_name'), 'expire' => $expire]);
-        cookie($key, $value, $expire);
+        if($expire){
+            $res = Cookie::set($key,$value,['prefix'=>config('app_name').'_','expire'=>$expire]);
+        }else{
+            $res = Cookie::forever($key,$value,['prefix'=>config('app_name').'_']);
+        }
+        return $res;
+    }
+    function delCookieKey($key,$prefix=''){
+        if($prefix){
+            $res = Cookie::delete($key,$prefix);
+        }else{
+            $res = Cookie::delete($key,config('app_name').'_');
+        }
+        return $res;
     }
     function clearCookie($prefix=''){
         //  清空指定前缀的所有cookie值
         if($prefix){
-            $res=cookie(null, $prefix);
+            $res= Cookie::clear($prefix);
         }else{
-            $res=cookie(null, config('app_name'));
+            $res= Cookie::clear(config('app_name'));
         }
-
         return $res;
     }
     /**
@@ -781,22 +762,32 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
      */
     function getSession($key,$prefix=''){
         if($prefix){
-            $res=session($key, '', $prefix);
+            $res = Session::get($key,$prefix);
         }else{
-            $res=session($key, '', config('app_name'));
+            $res = Session::get($key,config('app_name'));
         }
         return $res;
     }
-    function setSession($key,$value,$prefix=''){
+    /**
+     * @param $key
+     * @param $value
+     * @param string $prefix
+     */
+    function setSession($key, $value, $prefix='')
+    {
         if($prefix){
-            session($key, $value, $prefix);
+            Session::set($key,$value,$prefix);
         }else{
-            session($key, $value, config('app_name'));
+            Session::set($key,$value,config('app_name'));
         }
-
     }
-    function clearSession(){
-        session(null, config('app_name'));
+    function clearSession($prefix=''){
+        if($prefix){
+            $res = Session::clear($prefix);
+        }else{
+            $res = Session::clear(config('app_name'));
+        }
+        return $res;
     }
     function getCache($key){
         $value=getSession($key);
@@ -811,6 +802,7 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
     function setCache($key,$value,$expire=7*24*3600){
         setSession($key,$value);
         setCookieKey($key,$value,$expire);
+        setCacheKey(getLoginUser().$key,$value,$expire);
         return true;
     }
 
@@ -879,13 +871,12 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
         return $html;
     }
 
-
-
-
     //Excel相关的函数
     /**
      *根据下标获得单元格所在列位置
-     **/
+     * @param $index
+     * @return mixed
+     */
     function getCells($index){
         $arr=array(
             'A','B','C','D','E','F','G','H','I','J','K','L','M',
@@ -897,7 +888,9 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
     }
     /**
      **获取边框样式代码
-     **/
+     * @param $color
+     * @return array
+     */
     function getBorderStyle($color){
         $styleArray = array(
             'borders' => array(
@@ -914,6 +907,11 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
      *  $type
      * $filename
      * $objPHPExcel
+     * @param $type
+     * @param $filename
+     * @param $objPHPExcel
+     * @throws PHPExcel_Reader_Exception
+     * @throws PHPExcel_Writer_Exception
      */
     function browser_export($type,$filename,$objPHPExcel){
         //清除缓冲区,避免乱码
@@ -933,27 +931,10 @@ function getList($table, $where, $order = 'id', $field = '*', $size=''){
         $objWriter->save('php://output');
     }
     /**
-     **微信公众号相关
-     */
-    function getAccessToken($appID,$appsecret,$type='') {
-        $access_token= S($appID.'access_token');
-        if (!$access_token) {
-            if($type){
-                // 如果是企业号用以下URL获取access_token
-                $url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=$appID&corpsecret=$appsecret";
-            }else{
-                $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".$appID."&secret=".$appsecret;
-            }
-            $res = json_decode(httpGet($url));
-            $access_token = $res->access_token;
-            if($access_token){
-                S($appID.'access_token',$access_token,7000);
-            }
-        }
-        return $access_token;
-    }
-    /**
      * 比较两个版本大小, $v1>v2:1 ; $v1=v2:0 ;$v1<v2:0
+     * @param $v1
+     * @param $v2
+     * @return int
      */
     function compareVersion($v1, $v2) {
         $v1 = explode(".",$v1);

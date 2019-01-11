@@ -1,16 +1,13 @@
 <?php
-
 namespace app\user\controller;
-
-use think\Controller;
 use think\Request;
-
-class User extends Controller
+use app\common\controller\Base;
+class User extends Base
 {
     /**
      * 显示资源列表
      *
-     * @return \think\Response
+     * @return void
      */
     public function index()
     {
@@ -20,7 +17,7 @@ class User extends Controller
     /**
      * 显示创建资源表单页.
      *
-     * @return \think\Response
+     * @return void
      */
     public function create()
     {
@@ -30,8 +27,8 @@ class User extends Controller
     /**
      * 保存新建的资源
      *
-     * @param  \think\Request  $request
-     * @return \think\Response
+     * @param  \think\Request $request
+     * @return void
      */
     public function save(Request $request)
     {
@@ -41,8 +38,8 @@ class User extends Controller
     /**
      * 显示指定的资源
      *
-     * @param  int  $id
-     * @return \think\Response
+     * @param  int $id
+     * @return void
      */
     public function read($id)
     {
@@ -52,8 +49,8 @@ class User extends Controller
     /**
      * 显示编辑资源表单页.
      *
-     * @param  int  $id
-     * @return \think\Response
+     * @param  int $id
+     * @return void
      */
     public function edit($id)
     {
@@ -63,9 +60,9 @@ class User extends Controller
     /**
      * 保存更新的资源
      *
-     * @param  \think\Request  $request
-     * @param  int  $id
-     * @return \think\Response
+     * @param  \think\Request $request
+     * @param  int $id
+     * @return void
      */
     public function update(Request $request, $id)
     {
@@ -75,8 +72,8 @@ class User extends Controller
     /**
      * 删除指定资源
      *
-     * @param  int  $id
-     * @return \think\Response
+     * @param  int $id
+     * @return void
      */
     public function delete($id)
     {

@@ -1,15 +1,11 @@
 <?php
     namespace app\admin\controller;
-    use \PHPExcel;
+    use think\Request;
+    use app\common\controller\Base;
     class Index extends Base
     {
-        public function index(){
+        public function index(Request $request){
 
-//            $objPHPExcel= new PHPExcel();
-////            dump(config());
-
-            $user=find('user',1);
-//            dump($user);
-            return json($user);
+            return $this->fetch();
         }
     }

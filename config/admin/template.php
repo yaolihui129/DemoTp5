@@ -26,4 +26,14 @@ return [
     'layout_on'    =>  true,
 
     'layout_name'  =>  'layout',
+
+    'tpl_replace_string'  =>  [
+        '__PUBLIC__' => dirname($_SERVER['SCRIPT_NAME']),
+        '__STATIC__' => dirname($_SERVER['SCRIPT_NAME']) . '/public/static',
+        '__CSS__'    => dirname($_SERVER['SCRIPT_NAME']) . '/public/static/css',
+        '__JS__'     => dirname($_SERVER['SCRIPT_NAME']) . '/public/static/js',
+        '__IMG__'    => 'http://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['SCRIPT_NAME']) . '/public/static/images',
+
+
+    ]
 ];

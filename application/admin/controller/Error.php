@@ -1,6 +1,7 @@
 <?php
-namespace app\admin\controller;
-    class Error extends Base
+    namespace app\admin\controller;
+    use app\common\controller\Error as CommonError;
+    class Error extends CommonError
     {
 
     }
