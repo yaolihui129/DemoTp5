@@ -6,8 +6,7 @@
         {
 
 //            dump(config());
-            dump(test());
-            dump(test2());
+
         }
 
         public function hello($name = 'ThinkPHP5')

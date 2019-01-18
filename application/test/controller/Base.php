@@ -1,13 +1,12 @@
 <?php
-    namespace app\test\controller;
-    use think\Controller;
-    use think\Request;
-    class Base extends Controller
+namespace app\test\controller;
+use app\common\controller\Base as commonBase;
+class Base extends commonBase
+{
+    function _empty()
     {
-        function _empty(){
-
-            $this->fetch('index');
-        }
-
-
+       return $this->fetch('index');
     }
+
+
+}

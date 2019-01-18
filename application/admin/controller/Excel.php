@@ -5,11 +5,7 @@
     class Excel extends Base
     {
         public function index(){
-            $where=array(
-               'username'=>'yaolh'
-            );
 
-            $user=getList('user',$where);
-dump($user);
+            return $this->fetch();
         }
     }

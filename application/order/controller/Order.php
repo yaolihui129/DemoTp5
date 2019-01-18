@@ -1,8 +1,7 @@
 <?php
 namespace app\order\controller;
-use think\Controller;
 use think\Request;
-class Order extends Controller
+class Order extends Base
 {
     /**
      * 显示资源列表

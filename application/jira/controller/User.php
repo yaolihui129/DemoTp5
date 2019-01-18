@@ -9,7 +9,19 @@
             if(!$this->obj){
                 $this->obj=new modelUser();
             }
-            $res=$this->find($this->obj,$id);
+            $res=$this->baseFind($this->obj,$id);
+            return json($res);
+        }
+
+        public function chaZhao(){
+            $array=[
+                'field'=>'USER_KEY',
+                'value'=>'sbo'
+            ];
+            if(!$this->obj){
+                $this->obj=new modelUser();
+            }
+            $res=$this->baseFindOne($this->obj,$array,$order='id',$temp='asc');
             return json($res);
         }
     }

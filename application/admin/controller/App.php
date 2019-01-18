@@ -1,7 +1,6 @@
 <?php
     namespace app\admin\controller;
     use app\admin\model\User;
-    use app\common\controller\Base;
     class App extends Base
     {
         private $table = 'app';

@@ -1,7 +1,8 @@
 <?php
 use think\facade\Route;
 
-//Route::rule('User/info/:id','admin/User/index');
+Route::rule('jira/Bug/:id','jira/Bug/info','GET');
+Route::rule('jira/Bug','jira/Bug/index','POST');
 
 return [
 

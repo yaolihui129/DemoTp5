@@ -1,7 +1,6 @@
 <?php
 namespace app\user\controller;
 use think\Request;
-use app\common\controller\Base;
 class User extends Base
 {
     /**

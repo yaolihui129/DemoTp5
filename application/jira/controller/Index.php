@@ -8,7 +8,7 @@
         public function index(Request $request){
             $id=$request->param('id');
             $obj=new modelUser();
-            $res=$this->find($obj,$id);
+            $res=$this->baseFind($obj,$id);
             return json($res);
         }
 

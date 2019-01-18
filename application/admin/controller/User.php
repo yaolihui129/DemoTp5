@@ -1,7 +1,6 @@
 <?php
     namespace app\admin\controller;
     use think\Request;
-    use app\common\controller\Base;
     use app\admin\model\User as modelUser;
     class User extends Base
     {
@@ -13,7 +12,7 @@
             if (!$this->obj) {
                 $this->obj = new modelUser();
             }
-            $res=$this->find($this->obj,$id);
+            $res=$this->baseFind($this->obj,$id);
             return json($res);
         }
 
@@ -24,7 +23,7 @@
             if(!$this->obj){
                 $this->obj=new modelUser();
             }
-            $id=$this->insert($this->obj ,$user,'id',$field);
+            $id=$this->baseInsert($this->obj ,$user,'id',$field);
             return json($id);
         }
 
@@ -33,7 +32,7 @@
             if(!$this->obj){
                 $this->obj=new modelUser();
             }
-            $res=$this->update($this->obj,$user);
+            $res=$this->baseUpdate($this->obj,$user);
             return json($res);
         }
 
@@ -42,7 +41,7 @@
             if(!$this->obj){
                 $this->obj=new modelUser();
             }
-            $res=$this->del($this->obj ,$user,true);
+            $res=$this->baseDel($this->obj ,$user,true);
             return json($res);
         }
     }
